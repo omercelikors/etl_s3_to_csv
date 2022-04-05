@@ -32,13 +32,22 @@ class CleanValues():
         except ValueError:
             return False
 
+    def clean_unit(self, val):
+        if val == 'None' or val == '' or val == None:
+            return False
+        try:
+            return int(val)
+        except ValueError:
+            return False
+
     def clean_it(self, data):
         output_data = data.copy()
         structure = {
             'name': 'clean_name',
             'code': 'clean_code',
             'buying' : 'clean_buying',
-            'selling' : 'clean_selling'
+            'selling' : 'clean_selling',
+            'unit' : 'clean_unit'
         }
 
         for key, val in data.items():

@@ -8,7 +8,8 @@ class Transform(CleanValues):
 	
 	RESULT_COLUMN_NAMES = [
 		'date',
-		'code', 
+		'code',
+		'unit',
 		'name', 
 		'buying',
 		'selling'
@@ -33,9 +34,10 @@ class Transform(CleanValues):
 			row_data = {}
 			row_data['date'] = currency.attrib['Tarih']
 			row_data['code'] = currency.attrib['CurrencyCode']
+			row_data['unit'] = currency.find('Unit').text
 			row_data['name'] = currency.find('CurrencyName').text
 			row_data['buying'] = currency.find('ExchangeRate').text
-			row_data['selling'] = None
+			row_data['selling'] = currency.find('ExchangeRate').text
 
 			row_data = self.clean_it(row_data)
 
@@ -51,6 +53,7 @@ class Transform(CleanValues):
 			row_data = {}
 			row_data['date'] = currency.attrib['Tarih']
 			row_data['code'] = currency.attrib['CurrencyCode']
+			row_data['unit'] = currency.find('Unit').text
 			row_data['name'] = currency.find('CurrencyName').text
 			row_data['buying'] = currency.find('BanknoteBuying').text
 			row_data['selling'] = currency.find('BanknoteSelling').text
