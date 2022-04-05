@@ -1,15 +1,16 @@
 import configparser
 import boto3
 from botocore.exceptions import ClientError
+import settings
 
 class Extract():
 
 	def __init__(self):
 		config = configparser.ConfigParser()
-		config.read('config.cfg')
-		self.BUCKET_NAME = config.get('aws_credentials', 'BUCKET_NAME')
-		self.AWS_ACCESS_KEY_ID = config.get('aws_credentials', 'AWS_ACCESS_KEY_ID')
-		self.AWS_SECRET_ACCESS_KEY = config.get('aws_credentials', 'AWS_SECRET_ACCESS_KEY')
+		config.read('etl.cfg')
+		self.BUCKET_NAME = settings.BUCKET_NAME
+		self.AWS_ACCESS_KEY_ID = settings.AWS_ACCESS_KEY_ID
+		self.AWS_SECRET_ACCESS_KEY = settings.AWS_SECRET_ACCESS_KEY
 		self.INFORMATIVE_FILE_NAME = config.get('files', 'INFORMATIVE_FILE_NAME')
 		self.INDICATIVE_FILE_NAME = config.get('files', 'INDICATIVE_FILE_NAME')
 		self.BASE_PATH_FOR_DOWNLOADING = config.get('path', 'BASE_PATH_FOR_DOWNLOADING')
@@ -49,23 +50,10 @@ class Extract():
 
 		return True
 
-	def get_file_objects(self):
-		file_objects = {}
-
-		target_path = f"{self.BASE_PATH_FOR_DOWNLOADING}{self.INFORMATIVE_FILE_NAME}"
-		with open(target_path, 'r') as fp:
-			file_objects[self.INFORMATIVE_FILE_NAME] = fp
-
-		target_path = f"{self.BASE_PATH_FOR_DOWNLOADING}{self.INDICATIVE_FILE_NAME}"
-		with open(target_path, 'r') as fp:
-			file_objects[self.INDICATIVE_FILE_NAME] = fp
-
-		return file_objects
-
 	def run(self):
 		# self.create_s3_bucket_client()
 		# self.download_file()
-		return self.get_file_objects()
+		return True
 
 # extract = Extract()
 # extract.run()
