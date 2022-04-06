@@ -1,3 +1,4 @@
 scovenv
 settings.py
 test.py
+__pycache__
