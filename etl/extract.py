@@ -53,7 +53,9 @@ class Extract:
 		return True
 
 	def run(self):
-		self.create_s3_bucket_client()
-		self.download_file()
-			
-		return True
+		if self.create_s3_bucket_client():
+			if self.download_file():
+				return True
+			else:
+				return False
+		return False
