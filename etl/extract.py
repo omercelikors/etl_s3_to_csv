@@ -3,11 +3,12 @@ import boto3
 from botocore.exceptions import ClientError
 import settings
 
-class Extract():
+class Extract:
 
 	def __init__(self):
 		config = configparser.ConfigParser()
 		config.read('etl.cfg')
+
 		self.BUCKET_NAME = settings.BUCKET_NAME
 		self.AWS_ACCESS_KEY_ID = settings.AWS_ACCESS_KEY_ID
 		self.AWS_SECRET_ACCESS_KEY = settings.AWS_SECRET_ACCESS_KEY
@@ -51,8 +52,9 @@ class Extract():
 		return True
 
 	def run(self):
-		# self.create_s3_bucket_client()
-		# self.download_file()
+		self.create_s3_bucket_client()
+		self.download_file()
+		
 		return True
 
 # extract = Extract()

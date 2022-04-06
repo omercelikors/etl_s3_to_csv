@@ -1,6 +1,6 @@
 import configparser
 
-class Load():
+class Load:
 	
 	def __init__(self, result_df):
 		config = configparser.ConfigParser()

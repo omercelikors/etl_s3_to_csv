@@ -17,11 +17,11 @@ class Main():
         return load.run()
     
     def run(self):
-        self.extract_data()
+        # self.extract_data()
         result_df = self.transform_data()
-        process_result = self.load_data(result_df)
+        # process_result = self.load_data(result_df)
         
-        return process_result
+        # return process_result
 
 main = Main()
 main.run()
