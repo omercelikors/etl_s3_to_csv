@@ -3,20 +3,11 @@ import pandas as pd
 import xml.etree.ElementTree as ET
 import threading
 from clean_values import CleanValues
+from model import RateModel
+from dataclasses import asdict
 
 class Transform(CleanValues):
 	
-	RESULT_COLUMN_NAMES = [
-		'date',
-		'code',
-		'unit',
-		'name', 
-		'buying',
-		'selling'
-	]
-
-	result_df = pd.DataFrame(columns=RESULT_COLUMN_NAMES)
-
 	def __init__(self):
 		config = configparser.ConfigParser()
 		config.read('etl.cfg')
@@ -25,47 +16,59 @@ class Transform(CleanValues):
 		self.INFORMATIVE_FILE_NAME = config.get('files', 'INFORMATIVE_FILE_NAME')
 		self.INDICATIVE_FILE_NAME = config.get('files', 'INDICATIVE_FILE_NAME')
 
+		self.result_df = pd.DataFrame()
+
 	def parse_informative_object(self):
 		target_path = f"../{self.BASE_PATH_FOR_DOWNLOADING}{self.INFORMATIVE_FILE_NAME}"
 		tree = ET.parse(target_path)
 		root = tree.getroot()
 		
+		informative_rates = []
 		for currency in root.findall("./Currency"):
-			row_data = {}
-			row_data['date'] = currency.attrib['Tarih']
-			row_data['code'] = currency.attrib['CurrencyCode']
-			row_data['unit'] = currency.find('Unit').text
-			row_data['name'] = currency.find('CurrencyName').text
-			row_data['buying'] = currency.find('ExchangeRate').text
-			row_data['selling'] = currency.find('ExchangeRate').text
 
-			row_data = self.clean_it(row_data)
+			rate_model = RateModel(
+            	date = currency.attrib['Tarih'],
+            	code = currency.attrib['CurrencyCode'],
+            	unit = currency.find('Unit').text,
+            	name = currency.find('CurrencyName').text,
+            	buying = currency.find('ExchangeRate').text,
+            	selling = currency.find('ExchangeRate').text,
+        	)
 
-			self.result_df = self.result_df.append(row_data, ignore_index=True)
+			row_data = self.clean_it(asdict(rate_model))
+			informative_rates.append(row_data)
+		
+		temp_df = pd.DataFrame(informative_rates)
+		# Use concat() instead of append. For further details see Deprecated DataFrame.append and Series.append
+		self.result_df = pd.concat([self.result_df,temp_df]) 
+			
 			
 	def parse_indicative_object(self):
 		target_path = f"../{self.BASE_PATH_FOR_DOWNLOADING}{self.INDICATIVE_FILE_NAME}"
 		tree = ET.parse(target_path)
 		root = tree.getroot()
-		
+
+		informative_rates = []
 		for currency in root.findall("./Currency"):
 			
-			row_data = {}
-			row_data['date'] = currency.attrib['Tarih']
-			row_data['code'] = currency.attrib['CurrencyCode']
-			row_data['unit'] = currency.find('Unit').text
-			row_data['name'] = currency.find('CurrencyName').text
-			row_data['buying'] = currency.find('BanknoteBuying').text
-			row_data['selling'] = currency.find('BanknoteSelling').text
+			rate_model = RateModel(
+            	date = currency.attrib['Tarih'],
+            	code = currency.attrib['CurrencyCode'],
+            	unit = currency.find('Unit').text,
+            	name = currency.find('CurrencyName').text,
+            	buying = currency.find('BanknoteBuying').text,
+            	selling = currency.find('BanknoteSelling').text,
+        	)
 
-			row_data = self.clean_it(row_data)
+			row_data = self.clean_it(asdict(rate_model))
+			informative_rates.append(row_data)
 
-			self.result_df = self.result_df.append(row_data, ignore_index=True)
+		temp_df = pd.DataFrame(informative_rates)
+		# Use concat() instead of append. For further details see Deprecated DataFrame.append and Series.append
+		self.result_df = pd.concat([self.result_df,temp_df], ignore_index=True)
 
 	def run(self):
-		# self.parse_informative_object()
-		# self.parse_indicative_object()
-
+		# Two object are processed in multi threads.
 		t1 = threading.Thread(target=self.parse_informative_object())
 		t2 = threading.Thread(target=self.parse_indicative_object())
 
