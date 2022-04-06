@@ -1,6 +1,7 @@
 from extract import Extract
 from transform import Transform
 from load import Load
+import logging
 
 class Main():
 
@@ -17,11 +18,15 @@ class Main():
         return load.run()
     
     def run(self):
-        # self.extract_data()
-        result_df = self.transform_data()
-        # process_result = self.load_data(result_df)
-        
-        # return process_result
+        if self.extract_data():
+            result_df = self.transform_data()
+            process_result = self.load_data(result_df)
 
-main = Main()
-main.run()
+            return process_result
+        else:
+
+            return False
+
+if __name__ == "__main__":
+    main = Main()
+    main.run()
