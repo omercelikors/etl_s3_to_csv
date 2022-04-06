@@ -65,7 +65,7 @@ class Transform(CleanValues):
 
 		temp_df = pd.DataFrame(informative_rates)
 		# Use concat() instead of append. For further details see Deprecated DataFrame.append and Series.append
-		self.result_df = pd.concat([self.result_df,temp_df], ignore_index=True)
+		self.result_df = pd.concat([self.result_df,temp_df])
 
 	def run(self):
 		# Two object are processed in multi threads.
@@ -78,4 +78,7 @@ class Transform(CleanValues):
 		t1.join()
 		t2.join()
 
+		self.result_df = self.result_df.sort_values(by="date", ignore_index=True)
+		self.result_df.index += 1
+		
 		return self.result_df
