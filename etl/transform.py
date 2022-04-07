@@ -7,7 +7,10 @@ from model import RateModel
 from dataclasses import asdict
 
 class Transform(CleanValues):
-	
+	"""
+		All data fields are required.
+		All fields must be completely provided for data integrity.
+	"""
 	def __init__(self):
 		config = configparser.ConfigParser()
 		config.read('etl.cfg')
@@ -26,7 +29,7 @@ class Transform(CleanValues):
 		
 		informative_rates = []
 		for currency in root.findall("./Currency"):
-			# validating of keys can be added
+			# validating of keys module can be added
 			try:
 				rate_model = RateModel(
             		date = currency.attrib['Tarih'],
@@ -36,7 +39,13 @@ class Transform(CleanValues):
             		buying = currency.find('ExchangeRate').text,
             		selling = currency.find('ExchangeRate').text,
         		)
+
 				row_data = self.clean_it(asdict(rate_model))
+				if 'error' in row_data.values():
+					error_object = f"Error on {currency.attrib} object."
+					print(error_object) # can be passed to log system
+					continue
+
 				informative_rates.append(row_data)
 			except Exception as e: # if a element key does not exist
 				error_object = f"Error on {currency.attrib} object."
@@ -57,7 +66,7 @@ class Transform(CleanValues):
 
 		informative_rates = []
 		for currency in root.findall("./Currency"):
-			# validating of keys can be added
+			# validating of keys module can be added
 			try:
 				rate_model = RateModel(
             		date = currency.attrib['Tarih'],
@@ -69,6 +78,11 @@ class Transform(CleanValues):
         		)
 
 				row_data = self.clean_it(asdict(rate_model))
+				if 'error' in row_data.values():
+					error_object = f"Error on {currency.attrib} object."
+					print(error_object) # can be passed to log system
+					continue
+
 				informative_rates.append(row_data)
 			except Exception as e:# if a element key does not exist
 				error_object = f"Error on {currency.attrib} object."

@@ -6,7 +6,7 @@ class CleanValues:
 		This class checks format and type of values.
 		It tries to convert value to convenient type.
 		if there is any problem about type or format, 
-		it produces 'Error' string instead of obtained value.
+		it produces 'error' string instead of obtained value.
 	"""
 
 	def clean_date(self, val):
@@ -82,7 +82,7 @@ class CleanValues:
 
 			cleaned_val = getattr(self, structure[key])(val)
 			if cleaned_val is False:
-				output_data[key] = 'Error'
+				output_data[key] = 'error'
 				continue
 
 			output_data[key] = cleaned_val
