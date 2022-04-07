@@ -20,9 +20,9 @@ class Main():
     def run(self):
         if self.extract_data():
             result_df = self.transform_data()
-            process_result = self.load_data(result_df)
+            load_result = self.load_data(result_df)
 
-            return process_result
+            return load_result
         else:
 
             return False
