@@ -22,21 +22,26 @@ class Transform(CleanValues):
 		target_path = f"../{self.BASE_PATH_FOR_DOWNLOADING}{self.INFORMATIVE_FILE_NAME}"
 		tree = ET.parse(target_path)
 		root = tree.getroot()
+
 		
 		informative_rates = []
 		for currency in root.findall("./Currency"):
-
-			rate_model = RateModel(
-            	date = currency.attrib['Tarih'],
-            	code = currency.attrib['CurrencyCode'],
-            	unit = currency.find('Unit').text,
-            	name = currency.find('CurrencyName').text,
-            	buying = currency.find('ExchangeRate').text,
-            	selling = currency.find('ExchangeRate').text,
-        	)
-
-			row_data = self.clean_it(asdict(rate_model))
-			informative_rates.append(row_data)
+			# validate keys can be added
+			try:
+				rate_model = RateModel(
+            		date = currency.attrib['Tarih'],
+            		code = currency.attrib['CurrencyCode'],
+            		unit = currency.find('Unit').text,
+            		name = currency.find('CurrencyName').text,
+            		buying = currency.find('ExchangeRate').text,
+            		selling = currency.find('ExchangeRate').text,
+        		)
+				row_data = self.clean_it(asdict(rate_model))
+				informative_rates.append(row_data)
+			except Exception as e:
+				print(e) # can be passed to log system
+			finally:
+				continue
 		
 		temp_df = pd.DataFrame(informative_rates)
 		# Use concat() instead of append. For further details see Deprecated DataFrame.append and Series.append
@@ -50,18 +55,23 @@ class Transform(CleanValues):
 
 		informative_rates = []
 		for currency in root.findall("./Currency"):
-			
-			rate_model = RateModel(
-            	date = currency.attrib['Tarih'],
-            	code = currency.attrib['CurrencyCode'],
-            	unit = currency.find('Unit').text,
-            	name = currency.find('CurrencyName').text,
-            	buying = currency.find('BanknoteBuying').text,
-            	selling = currency.find('BanknoteSelling').text,
-        	)
+			# validate keys can be added
+			try:
+				rate_model = RateModel(
+            		date = currency.attrib['Tarih'],
+            		code = currency.attrib['CurrencyCode'],
+            		unit = currency.find('Unit').text,
+            		name = currency.find('CurrencyName').text,
+            		buying = currency.find('BanknoteBuying').text,
+            		selling = currency.find('BanknoteSelling').text,
+        		)
 
-			row_data = self.clean_it(asdict(rate_model))
-			informative_rates.append(row_data)
+				row_data = self.clean_it(asdict(rate_model))
+				informative_rates.append(row_data)
+			except Exception as e:
+				print(e) # can be passed to log system
+			finally:
+				continue
 
 		temp_df = pd.DataFrame(informative_rates)
 		# Use concat() instead of append. For further details see Deprecated DataFrame.append and Series.append
