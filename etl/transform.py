@@ -26,7 +26,7 @@ class Transform(CleanValues):
 		
 		informative_rates = []
 		for currency in root.findall("./Currency"):
-			# validate keys can be added
+			# validating of keys can be added
 			try:
 				rate_model = RateModel(
             		date = currency.attrib['Tarih'],
@@ -38,8 +38,10 @@ class Transform(CleanValues):
         		)
 				row_data = self.clean_it(asdict(rate_model))
 				informative_rates.append(row_data)
-			except Exception as e:
-				print(e) # can be passed to log system
+			except Exception as e: # if a element key does not exist
+				error_object = f"Error on {currency.attrib} object."
+				error_message = f"Desc: {e} - Object: {error_object}"
+				print(error_message) # can be passed to log system
 			finally:
 				continue
 		
@@ -55,7 +57,7 @@ class Transform(CleanValues):
 
 		informative_rates = []
 		for currency in root.findall("./Currency"):
-			# validate keys can be added
+			# validating of keys can be added
 			try:
 				rate_model = RateModel(
             		date = currency.attrib['Tarih'],
@@ -68,8 +70,10 @@ class Transform(CleanValues):
 
 				row_data = self.clean_it(asdict(rate_model))
 				informative_rates.append(row_data)
-			except Exception as e:
-				print(e) # can be passed to log system
+			except Exception as e:# if a element key does not exist
+				error_object = f"Error on {currency.attrib} object."
+				error_message = f"Desc: {e} - Object: {error_object}"
+				print(error_message) # can be passed to log system
 			finally:
 				continue
 
